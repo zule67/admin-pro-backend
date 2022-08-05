@@ -39,18 +39,68 @@ const crearHospital = async(req, res = response) => {
     }
 }
 
-const actualizarHospital = (req, res = response) => {
-    res.json({
-        ok : true,
-        msg : 'actualizarHospital'
-    })
+const actualizarHospital = async (req, res = response) => {
+
+    const id = req.params.id;
+    const uid = req.uid;
+
+    try {
+        const hospital = await Hospital.findById(id);
+
+        if(!hospital) {
+            res.status(404).json({
+                ok : false,
+                msg : 'Hospital no encontrado por Id'
+            })
+        }
+
+        // Se puede hacer de las dos formas
+        // hospital.nombre = req.body.nombre;
+        const cambioHospital = {
+            ...req.body,
+            usuario: uid
+        }
+
+        const hospitalActualizado = await Hospital.findByIdAndUpdate(id, cambioHospital, { new: true })
+
+        res.json({
+            ok : true,
+            hospital : hospitalActualizado
+        })
+    } catch (error) {
+        res.status(500).json({
+            ok : false,
+            msg : 'Hable con el administrador'
+        })
+    }
+
 }
 
-const borrarHospital = (req, res = response) => {
-    res.json({
-        ok : true,
-        msg : 'borrarHospital'
-    })
+const borrarHospital = async (req, res = response) => {
+    const id = req.params.id;
+
+    try {
+        const hospital = await Hospital.findById(id);
+
+        if(!hospital) {
+            res.status(404).json({
+                ok : false,
+                msg : 'Hospital no encontrado por Id'
+            })
+        }
+
+        await Hospital.findByIdAndDelete(id);
+        
+        res.json({
+            ok : true,
+            msg : 'Hospital eliminado'
+        })
+    } catch (error) {
+        res.status(500).json({
+            ok : false,
+            msg : 'Hable con el administrador'
+        })
+    }
 }
 
 module.exports = {
