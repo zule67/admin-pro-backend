@@ -21,7 +21,7 @@
             fetch(url, {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify(({ token: response.credential }))
+                body: JSON.stringify({ token: response.credential })
             })
             .then (resp => resp.json())
             .then (data => console.log('Nuestro server', data))
